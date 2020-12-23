@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Open Debate API
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        generate_statistics: false
+    show-sql: false
+
+  profiles:
+    active: local
+    include:
+      - pubnub

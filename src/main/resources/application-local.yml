@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/open_debate
+    driverClassName: org.postgresql.Driver
+    database: open_debate
+    username: api_user
+    password: password1
