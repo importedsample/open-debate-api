@@ -52,6 +52,8 @@ public class UserService {
 
       user.setUid(UUID.randomUUID());
 
+      // TODO : Register User with AuthO
+
       repo.save(user);
     } catch (InvalidEmailAddressError | UserExistsError ex) {
       throw new UserException(ex);
@@ -68,8 +70,10 @@ public class UserService {
    */
   public User fetchUser(@Email final String email) {
     try {
+
       validateEmail(email);
       return repo.findByEmail(email);
+
     } catch (InvalidEmailAddressError ex) {
       throw new UserException(ex);
     }
@@ -82,10 +86,15 @@ public class UserService {
    * @return "OK" if successful
    */
   public String updateUser(@Validated final User user) {
-    // TODO : Verify that the user who is making the update is the user
-    //   being updated.
-    repo.save(user);
-    return "OK";
+    try {
+      validateEmail(user.getEmail());
+      // TODO : Verify that the user who is making the update is the user
+      //   being updated.
+      repo.save(user);
+      return "OK";
+    } catch (InvalidEmailAddressError er) {
+      throw new UserException(er);
+    }
   }
 
   /**

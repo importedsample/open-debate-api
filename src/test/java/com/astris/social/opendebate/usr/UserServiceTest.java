@@ -2,6 +2,7 @@ package com.astris.social.opendebate.usr;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -123,6 +124,7 @@ class UserServiceTest {
     assertEquals( user.getEmail(), result.getEmail());
     assertEquals(user.getUsername(), result.getUsername());
     assertEquals(user.getUid(), result.getUid());
+    assertNull(user.getId());
 
   }
 
@@ -144,5 +146,53 @@ class UserServiceTest {
     }
 
   }
+
+  /**
+   * Verify that the repository is called when updating the user information.
+   * TODO : Features will need added to this to verify the user data with
+   *   the user making the call.
+   */
+  @DisplayName("Update User - Success")
+  @Test
+  void updateUserTest() {
+    User user = new User();
+    user.setEmail("someuser@someplace.com");
+    user.setId(12345L);
+    user.setUid(UUID.randomUUID());
+    user.setUsername("TheDude");
+
+    service.updateUser(user);
+
+    verify(repo).save(user);
+  }
+
+  /**
+   * Fail Updating User when email address is invalid.
+   */
+  @DisplayName("Update User - Fail on Email")
+  @Test
+  void updateUserFailTest() {
+    User user = new User();
+    user.setEmail("someuser@someplace");
+    user.setId(12345L);
+    user.setUid(UUID.randomUUID());
+    user.setUsername("TheDude");
+
+    try {
+      service.updateUser(user);
+      fail();
+    } catch (UserException ex) {
+      verify(repo, never()).save(user);
+
+      assertEquals(
+          "com.astris.social.opendebate.usr.exceptions."
+              + "InvalidEmailAddressError: someuser@someplace",
+          ex.getMessage()
+      );
+    }
+
+  }
+
+
 
 }
